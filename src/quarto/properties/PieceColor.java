@@ -4,5 +4,16 @@ package quarto.properties;
  *
  */
 public enum PieceColor {
-  RED, BLUE;
+  RED("r"), BLACK("b");
+  
+  private String display;
+  
+  private PieceColor(String display){
+    this.display = display;
+  }
+  
+  @Override
+  public String toString(){
+    return display;
+  }
 }

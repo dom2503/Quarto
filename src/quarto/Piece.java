@@ -13,16 +13,32 @@ import quarto.properties.PieceSize;
  */
 public class Piece{
   private PieceColor color;
-  private PieceSize isBig;
-  private PieceInnerShape hasHole;
-  private PieceShape isRound;
+  private PieceSize size;
+  private PieceInnerShape innerShape;
+  private PieceShape shape;
   
-  public Piece(PieceColor color, PieceSize isBig, PieceInnerShape hasHole, PieceShape isRound){
+  public Piece(PieceColor color, PieceSize size, PieceInnerShape innerShape, PieceShape shape){
     this.color = color;
-    this.isBig = isBig;
-    this.hasHole = hasHole;
-    this.isRound = isRound;
+    this.size = size;
+    this.innerShape = innerShape;
+    this.shape = shape;
   }
   
-  public boolean get
+  @Override
+  public String toString(){
+    StringBuilder returnBuilder = new StringBuilder();
+    
+    returnBuilder.append(this.shape);
+    returnBuilder.insert(1, this.innerShape);
+    returnBuilder.insert(1, this.color);
+    
+    String returnString = returnBuilder.toString();
+    if(size == PieceSize.BIG){
+      returnString = returnString.toUpperCase();
+    }
+    
+    
+    return returnString;
+  }
+  
 }
