@@ -14,10 +14,10 @@ abstract public class QuartoPlayer implements Player{
 
   private Piece givenPiece;
   private Board board;
+  private String name;
   
-  public QuartoPlayer(Board board, Piece givenPiece){
+  public QuartoPlayer(Board board){
     this.board = board;
-    this.givenPiece = givenPiece;
   }
   
   /**
@@ -27,11 +27,26 @@ abstract public class QuartoPlayer implements Player{
     return this.givenPiece;
   }
   
+  @Override
+  public void setGivenPiece(Piece givenPiece){
+    this.givenPiece =  givenPiece;
+  }
+  
   /**
    * @return The Quarto board on which the game is currently played.
    */
   protected Board getBoard(){
     return this.board;
+  }
+  
+  @Override
+  public void setName(String name){
+    this.name = name;
+  }
+  
+  @Override
+  public String getName(){
+    return this.name;
   }
   
 }

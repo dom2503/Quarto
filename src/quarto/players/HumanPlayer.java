@@ -12,8 +12,8 @@ import quarto.Piece;
  */
 public class HumanPlayer extends QuartoPlayer{
 
-  public HumanPlayer(Board board, Piece givenPiece){
-    super(board, givenPiece);
+  public HumanPlayer(Board board){
+    super(board);
   }
   
   @Override

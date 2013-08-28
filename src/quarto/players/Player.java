@@ -21,4 +21,19 @@ public interface Player {
    * @return The Quarto piece that was selected to be given to the 
    */
   public Piece selectPieceForOpponent();
+  
+  /**
+   * Stores the piece that was selected for the next move by the opponent.
+   */
+  public void setGivenPiece(Piece givenPiece);
+  
+  /**
+   * Sets the name of this player.
+   */
+  public void setName(String name);
+  
+  /**
+   * Returns the name given to this player. 
+   */
+  public String getName();
 }

@@ -60,6 +60,10 @@ public class Board {
     return false;
   }
   
+  public boolean reachedFinalState(){
+    return false;
+  }
+  
   @Override
   public String toString(){
     System.out.println("   ");
