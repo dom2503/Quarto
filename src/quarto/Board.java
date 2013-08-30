@@ -1,6 +1,3 @@
-/*
- * 
- */
 package quarto;
 
 import java.util.ArrayList;
@@ -150,7 +147,7 @@ public class Board {
    * Retrieves the piece that currently has the given index and removes it from the collection of
    * available pieces.
    *
-   * @param index A 1 based index number of the
+   * @param index A 1-based index number of the piece that should be taken.
    * @return The selected Piece.
    */
   public Piece takePieceForOpponent(int index) {
