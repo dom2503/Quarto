@@ -37,7 +37,6 @@ public class Piece{
       returnString = returnString.toUpperCase();
     }
     
-    
     return returnString;
   }
   

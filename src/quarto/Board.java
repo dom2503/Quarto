@@ -34,12 +34,18 @@ public class Board {
    * @param y
    * @param piece
    */
-  public void setField(int x, int y, Piece piece) {
+  public boolean setField(int x, int y, Piece piece) {
     if (this.isValidCoordinate(x, y) && this.fieldIsEmpty(x, y)) {
       this.fields[y][x] = piece;
+      return true;
     }
+    
+    return false;
   }
 
+  /**
+   * Returns the board to it's initial state, so that a new game could be started.
+   */
   public final void resetBoard() {
     this.setupPieces();
     this.fields = new Piece[BOARD_LENGTH][BOARD_LENGTH];
@@ -67,6 +73,12 @@ public class Board {
     return false;
   }
 
+  /**
+   * Checks whether the games is over.
+   * 
+   * There exist two possibilities, either one of the players has one by putting a 
+   * piece or all the pieces are gone and it's a draw.
+   */
   public boolean reachedFinalState() {
     if (pieces.isEmpty()) {
       return true;
@@ -74,16 +86,19 @@ public class Board {
     return false;
   }
 
-  public void printBoard(){
+  /**
+   * Prints a string representation of the current state of the board.
+   */
+  public void printBoard() {
     System.out.println("y\\x    1      2      3      4");
-    
-    for(int i=0; i<BOARD_LENGTH;i++){
+
+    for (int i = 0; i < BOARD_LENGTH; i++) {
       System.out.print(" " + (char) (i + 65) + "    ");
-      for(int j=0; j<BOARD_LENGTH; j++){
-        if(fields[i][j] != null){
-          System.out.print(" " + fields[i][j] + "  ");
-        }else{
-          System.out.print(" ____  ");
+      for (int j = 0; j < BOARD_LENGTH; j++) {
+        if (fields[i][j] != null) {
+          System.out.print(" " + fields[i][j] + "  "); //uses toString of the piece to print it
+        } else {
+          System.out.print(" ____  "); //empty field
         }
       }
       System.out.println();
@@ -93,8 +108,8 @@ public class Board {
   /**
    * Creates the 16 different playing pieces.
    *
-   * The generation is done by using the values of the binary representation of the loop index as
-   * the
+   * The generation is done by using the values of the binary representation of the loop index.
+   * These are then converted into the appropriate Enum values from the properties package.
    */
   private void setupPieces() {
     this.pieces = new ArrayList(16);
@@ -116,9 +131,13 @@ public class Board {
     return this.pieces;
   }
 
+  /**
+   * Prints a list of all the pieces that haven't been put on the board yet and adds a 1-based index
+   * number to them, that can be used for user input.
+   */
   public void printLeftoverPieces() {
     System.out.println();
-    System.out.println("These are the unused pieces:");
+    System.out.println("These are the available pieces:");
     int index = 1;
     for (Piece currentPiece : pieces) {
       System.out.print(index + "." + currentPiece + "  ");
@@ -127,7 +146,18 @@ public class Board {
     System.out.println();
   }
 
+  /**
+   * Retrieves the piece that currently has the given index and removes it from the collection of
+   * available pieces.
+   *
+   * @param index A 1 based index number of the
+   * @return The selected Piece.
+   */
   public Piece takePieceForOpponent(int index) {
-    return pieces.remove(index - 1);
+    if (pieces.size() >= index) {
+      return pieces.remove(index - 1);
+    }
+
+    throw new IllegalArgumentException("The given index is out of range.");
   }
 }

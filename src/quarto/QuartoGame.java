@@ -1,19 +1,13 @@
-/**
- *
- */
 package quarto;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 import quarto.players.HumanPlayer;
 import quarto.players.Player;
-import quarto.properties.PieceColor;
-import quarto.properties.PieceInnerShape;
-import quarto.properties.PieceShape;
-import quarto.properties.PieceSize;
 
 /**
- * The main class of this Quarto game.
+ * The main class of this simple command line Quarto game.
+ * 
+ * Initializes the players and the board and then starts the game loop.
  */
 public class QuartoGame {
 
@@ -34,20 +28,24 @@ public class QuartoGame {
     this.scanner = new Scanner(System.in);
     this.board = new Board();
 
-    System.out.println("---------- Welcome to Quarto! ----------");
+    System.out.println("---------- Welcome to Quarto! ----------\n");
 
+    this.printPlayerTypes();
     System.out.println("Please select the type of Player1:");
     this.currentPlayer = this.playerTypeSelection("Player1");
+    System.out.println();
 
+    this.printPlayerTypes();
     System.out.println("Please select the type of Player2:");
     this.nextPlayer = this.playerTypeSelection("Player2");
+    System.out.println();
   }
 
   private void start() {
     System.out.println();
-    System.out.println("The game is starting now.");
+    System.out.println("----- The game is starting now -----");
 
-    while (!this.isOver()) {
+    while (!this.board.reachedFinalState()) {
       this.playRound();
     }
   }
@@ -73,14 +71,6 @@ public class QuartoGame {
     this.currentPlayer.makeMove();
   }
 
-  private boolean isOver() {
-    if (this.board.reachedFinalState()) {
-      return true;
-    }
-
-    return false;
-  }
-
   private void printPlayerTypes() {
     System.out.println("1. Human Player");
     System.out.println("2. Random Player");
@@ -88,9 +78,12 @@ public class QuartoGame {
     System.out.println("4. Minimax Player");
   }
 
+  /**
+   * Asks the user for an index of a new player and creates it
+   * .
+   * @param playerName The name that should be given to the player
+   */
   private Player playerTypeSelection(String playerName) {
-    System.out.println();
-    this.printPlayerTypes();
     int typeIndex = this.scanner.nextInt();
     Player player = null;
 
@@ -108,7 +101,7 @@ public class QuartoGame {
         //insert minimax player when ready
         break;
       default:
-        System.out.println("Please only input number between 1 and 4. ");
+        System.out.println("Please only input numbers between 1 and 4. ");
         player = this.playerTypeSelection(playerName);
     }
     
