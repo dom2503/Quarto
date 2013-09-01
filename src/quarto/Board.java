@@ -13,7 +13,7 @@ import quarto.properties.PieceSize;
  */
 public class Board {
 
-  private static int BOARD_LENGTH = 4;
+  public final static int BOARD_LENGTH = 4;
   private ArrayList<Piece> pieces;
   private Piece[][] fields;
 
@@ -126,6 +126,10 @@ public class Board {
 
   public ArrayList<Piece> getLeftoverPieces() {
     return this.pieces;
+  }
+  
+  public int getLeftoverPieceCount(){
+    return this.pieces.size();
   }
 
   /**

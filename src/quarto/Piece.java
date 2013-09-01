@@ -25,6 +25,11 @@ public class Piece{
   }
   
   @Override
+  /**
+   * Puts together a string representation of the properties of this piece.
+   * 
+   * Examples: [r*], (B )
+   */
   public String toString(){
     StringBuilder returnBuilder = new StringBuilder();
     

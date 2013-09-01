@@ -3,6 +3,7 @@ package quarto;
 import java.util.Scanner;
 import quarto.players.HumanPlayer;
 import quarto.players.Player;
+import quarto.players.RandomPlayer;
 
 /**
  * The main class of this simple command line Quarto game.
@@ -92,7 +93,7 @@ public class QuartoGame {
         player = new HumanPlayer(this.board);
         break;
       case 2:
-        //insert random player when ready
+        player = new RandomPlayer(this.board);
         break;
       case 3:
         //insert novice player when ready
