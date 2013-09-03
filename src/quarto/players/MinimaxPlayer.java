@@ -8,12 +8,16 @@ import quarto.Piece;
  */
 public class MinimaxPlayer extends QuartoPlayer {
 
+  final private int depth;
+  
   public MinimaxPlayer(Board board){
     this(board, 3);
   }
   
   public MinimaxPlayer(Board board, int depth){
     super(board);
+    
+    this.depth = depth;
   }
   
   @Override
@@ -26,4 +30,8 @@ public class MinimaxPlayer extends QuartoPlayer {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
   
+  
+  class Node{
+    
+  }
 }
