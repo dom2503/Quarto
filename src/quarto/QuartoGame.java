@@ -43,12 +43,23 @@ public class QuartoGame {
     System.out.println();
   }
 
+  /**
+   * Start the game loop and run it until the game is over.
+   */
   private void start() {
     System.out.println();
     System.out.println("----- The game is starting now -----");
 
-    while (!this.board.reachedFinalState()) {
+    while(!this.board.gameWasWon() || !this.board.isDraw()) {
       this.playRound();
+    }
+    
+    if(this.board.isDraw()){
+      System.out.println("You played to a draw. Nobody won.");
+      System.exit(0);
+    } else if(this.board.gameWasWon()){
+      System.out.println("Congratulations " + this.currentPlayer.getName() + " you have won the game.");
+      System.exit(0);
     }
   }
 
@@ -73,6 +84,9 @@ public class QuartoGame {
     this.currentPlayer.makeMove();
   }
 
+  /**
+   * Prints a list of all available player types to choose from.
+   */
   private void printPlayerTypes() {
     System.out.println("1. Human Player");
     System.out.println("2. Random Player");

@@ -8,8 +8,6 @@ import quarto.properties.PieceSize;
 
 /**
  * This class represents a board for playing Quarto.
- *
- *
  */
 public class Board {
 
@@ -17,19 +15,41 @@ public class Board {
   private ArrayList<Piece> pieces;
   private Piece[][] fields;
 
+  /**
+   * Sets up the board to the starting state.
+   */
   public Board() {
-    this.resetBoard();
+    this.setupPieces();
+    this.fields = new Piece[BOARD_LENGTH][BOARD_LENGTH];
+  }
+  
+  /**
+   * Copies the state of the given board to this board. 
+   */
+  public Board(Board board){
+    this.pieces = new ArrayList<Piece>(board.pieces);
+    this.fields = new Piece[BOARD_LENGTH][BOARD_LENGTH];
+    
+    Piece[][] oldFields = board.fields;
+    
+    for (int i = 0; i < BOARD_LENGTH; i++) {
+      System.arraycopy(oldFields[i], 0, this.fields[i], 0, oldFields[0].length);
+    }
   }
 
+  /**
+   * Returns the current state of the board.
+   * 
+   * Please note that the return value should never(!) be changed and just be
+   * used for evaluating the state of the board. Always use methods of this 
+   * class to change the state of the board.
+   */
   public Piece[][] getBoard() {
     return this.fields;
   }
 
   /**
-   *
-   * @param x
-   * @param y
-   * @param piece
+   * Sets the given field to the given coordinates if they are valid.
    */
   public boolean setField(int x, int y, Piece piece) {
     if (this.isValidCoordinate(x, y) && this.fieldIsEmpty(x, y)) {
@@ -38,14 +58,6 @@ public class Board {
     }
     
     return false;
-  }
-
-  /**
-   * Returns the board to it's initial state, so that a new game could be started.
-   */
-  public final void resetBoard() {
-    this.setupPieces();
-    this.fields = new Piece[BOARD_LENGTH][BOARD_LENGTH];
   }
 
   /**
@@ -71,15 +83,20 @@ public class Board {
   }
 
   /**
-   * Checks whether the games is over.
-   * 
-   * There exist two possibilities, either one of the players has one by putting a 
-   * piece or all the pieces are gone and it's a draw.
+   * Checks whether the last player that put a piece has won the game.
    */
-  public boolean reachedFinalState() {
-    if (pieces.isEmpty()) {
+  public boolean gameWasWon() {
+    return false;
+  }
+  
+  /**
+   * Checks whether the game is over and in a state of draw.
+   */
+  public boolean isDraw(){
+    if(pieces.isEmpty()){
       return true;
     }
+    
     return false;
   }
 
@@ -124,10 +141,16 @@ public class Board {
     }
   }
 
+  /**
+   * @return Returns the list of all the pieces that haven't been set yet.
+   */
   public ArrayList<Piece> getLeftoverPieces() {
     return this.pieces;
   }
   
+  /**
+   * @return The number of pieces that haven't been set yet.
+   */
   public int getLeftoverPieceCount(){
     return this.pieces.size();
   }
