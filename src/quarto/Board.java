@@ -53,7 +53,7 @@ public class Board {
    */
   public boolean setField(int x, int y, Piece piece) {
     if (this.isValidCoordinate(x, y) && this.fieldIsEmpty(x, y)) {
-      this.fields[y][x] = piece;
+      this.fields[x][y] = piece;
       return true;
     }
     
@@ -86,6 +86,50 @@ public class Board {
    * Checks whether the last player that put a piece has won the game.
    */
   public boolean gameWasWon() {
+    for(int i = 0; i < BOARD_LENGTH; i++){
+      //get row to check
+      Piece[] currentRow = {fields[0][i], fields[1][i], fields[2][i], fields[3][i]};
+      
+      //checks column and row
+      if(lineIsWon(fields[i]) || lineIsWon(currentRow)){
+        return true;
+      }
+    }
+    
+    //check diagonals
+    Piece[] backslashDiagonal = {fields[0][0], fields[1][1], fields[2][2], fields[3][3]};
+    Piece[] slashDiagonal = {fields[3][0], fields[2][1], fields[1][2], fields[0][3]};
+    if(lineIsWon(backslashDiagonal) || lineIsWon(slashDiagonal)){
+      return true;
+    }
+    
+    return false;
+  }
+  
+  /**
+   * Checks whether every space in the line was set.
+   */
+  private boolean lineIsFull(Piece[] line){
+    for(Piece piece : line){
+      if(piece == null){
+        return false;
+      }
+    }
+    return true;
+  }
+  
+  private boolean lineIsWon(Piece[] line){
+    Piece[] others = new Piece[line.length -1];
+    System.arraycopy(line, 1, others, 0, line.length-1);
+    
+    if(lineIsFull(line) && 
+            (line[0].size.equalsOthers(others) || 
+            line[0].color.equalsOthers(others) || 
+            line[0].innerShape.equalsOthers(others) || 
+            line[0].shape.equalsOthers(others))){
+      return true;
+    }
+    
     return false;
   }
   
@@ -109,8 +153,8 @@ public class Board {
     for (int i = 0; i < BOARD_LENGTH; i++) {
       System.out.print(" " + (char) (i + 65) + "    ");
       for (int j = 0; j < BOARD_LENGTH; j++) {
-        if (fields[i][j] != null) {
-          System.out.print(" " + fields[i][j] + "  "); //uses toString of the piece to print it
+        if (fields[j][i] != null) {
+          System.out.print(" " + fields[j][i] + "  "); //uses toString of the piece to print it
         } else {
           System.out.print(" ____  "); //empty field
         }

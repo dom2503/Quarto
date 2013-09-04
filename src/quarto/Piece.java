@@ -12,10 +12,10 @@ import quarto.properties.PieceSize;
  *
  */
 public class Piece{
-  private PieceColor color;
-  private PieceSize size;
-  private PieceInnerShape innerShape;
-  private PieceShape shape;
+  final public PieceColor color;
+  final public PieceSize size;
+  final public PieceInnerShape innerShape;
+  final public PieceShape shape;
   
   public Piece(PieceColor color, PieceSize size, PieceInnerShape innerShape, PieceShape shape){
     this.color = color;

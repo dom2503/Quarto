@@ -50,7 +50,7 @@ public class QuartoGame {
     System.out.println();
     System.out.println("----- The game is starting now -----");
 
-    while(!this.board.gameWasWon() || !this.board.isDraw()) {
+    while(!this.board.gameWasWon() && !this.board.isDraw()) {
       this.playRound();
     }
     

@@ -32,6 +32,10 @@ public class MinimaxPlayer extends QuartoPlayer {
   
   
   class Node{
+    private Board currentBoard;
     
+    public Node(Board board){
+      
+    }
   }
 }
