@@ -22,10 +22,15 @@ public class HumanPlayer extends QuartoPlayer{
    * Queries the user for valid coordinates on the Quarto board.
    */
   public void makeMove() {
-    System.out.println("Please enter the x-coordinate for your move:");
-    int xCoordinate = this.scanner.nextInt();
-    System.out.println("Please enter the y-coordinate for your move:");
-    String yCoordinate = this.scanner.next("[ABCD]");
+    int xCoordinate = -1;
+    String yCoordinate = " ";
+    
+    while(!this.getBoard().fieldCanBeSet(xCoordinate, yCoordinate.charAt(0) - 65)){
+      System.out.println("Please enter the x-coordinate for your move:");
+      xCoordinate = this.scanner.nextInt();
+      System.out.println("Please enter the y-coordinate for your move:");
+      yCoordinate = this.scanner.next("[ABCDabcd]").toUpperCase();
+    }
     
     this.getBoard().setField(xCoordinate -1, yCoordinate.charAt(0) - 65, this.getGivenPiece());
     this.getBoard().printBoard();

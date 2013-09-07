@@ -60,6 +60,14 @@ public class Board {
     return false;
   }
 
+  public boolean fieldCanBeSet(int x, int y){
+    if (this.isValidCoordinate(x, y) && this.fieldIsEmpty(x, y)) {
+      return true;
+    }
+    
+    return false;
+  }
+  
   /**
    * Checks if the given field is still empty.
    */
@@ -227,5 +235,36 @@ public class Board {
     }
 
     throw new IllegalArgumentException("The given index is out of range.");
+  }
+  
+  /**
+   * If the piece was retrieved through some other means, this method just removes it from
+   * the collection
+   * 
+   * @param piece
+   * @return 
+   */
+  public Piece takePieceForOpponent(Piece piece){
+    if(this.pieces.contains(piece)){
+      this.pieces.remove(piece);
+      return piece;
+    }
+    
+    return null;
+  }
+  
+  /**
+   * Calculates the number of already made moves.
+   */
+  public int getMoveCount(){
+    int count = 0;
+    for(int i = 0; i<BOARD_LENGTH; i++){
+      for(int j = 0; j < BOARD_LENGTH; j++){
+        if(this.fields[i][j]!=null){
+          count++;
+        }
+      }
+    }
+    return count;
   }
 }

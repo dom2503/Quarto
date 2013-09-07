@@ -2,6 +2,7 @@ package quarto;
 
 import java.util.Scanner;
 import quarto.players.HumanPlayer;
+import quarto.players.MinimaxPlayer;
 import quarto.players.NovicePlayer;
 import quarto.players.Player;
 import quarto.players.RandomPlayer;
@@ -114,7 +115,7 @@ public class QuartoGame {
         player = new NovicePlayer(this.board);
         break;
       case 4:
-        player = new RandomPlayer(this.board);
+        player = new MinimaxPlayer(this.board);
         break;
       default:
         System.out.println("Please only input numbers between 1 and 4. ");
