@@ -145,7 +145,12 @@ public class Board {
    * Checks whether the game is over and in a state of draw.
    */
   public boolean isDraw(){
-    if(pieces.isEmpty()){
+    if(!this.gameWasWon()){
+      for(int i = 0; i < BOARD_LENGTH; i++){
+        if(!lineIsFull(this.fields[i])){
+          return false;
+        }
+      }
       return true;
     }
     

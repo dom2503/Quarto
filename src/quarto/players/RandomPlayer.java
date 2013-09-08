@@ -33,6 +33,7 @@ public class RandomPlayer extends QuartoPlayer{
   @Override
   public Piece selectPieceForOpponent() {
     int leftPieces = this.getBoard().getLeftoverPieceCount();
+    System.out.println("Left pieces: " + leftPieces);
     Piece piece = this.getBoard().takePieceForOpponent(rand.nextInt(leftPieces) + 1);
     System.out.println("I selected " + piece);
     return piece;

@@ -56,6 +56,7 @@ public class QuartoGame {
     }
     
     if(this.board.isDraw()){
+      this.board.printBoard();
       System.out.println("You played to a draw. Nobody won.");
       System.exit(0);
     } else if(this.board.gameWasWon()){
