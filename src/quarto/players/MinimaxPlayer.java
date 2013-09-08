@@ -14,7 +14,7 @@ import quarto.players.minimax.MinimaxNode;
  */
 public class MinimaxPlayer extends QuartoPlayer {
 
-  final private static int RANDOM_MOVES = 6;
+  final private static int RANDOM_MOVES = 4;
   final private static boolean DEBUG = false;
   final private int depth;
   final private BoardEvaluator evaluator;
@@ -29,7 +29,7 @@ public class MinimaxPlayer extends QuartoPlayer {
    * @param board
    */
   public MinimaxPlayer(Board board) {
-    this(board, 1);
+    this(board, 4);
   }
 
   /**
@@ -103,7 +103,7 @@ public class MinimaxPlayer extends QuartoPlayer {
     //have we reached a leaf or was the game already won?
     //then evaluate how good the current state is 
     if (node.getBoard().gameWasWon() || depth <= 0) {
-      return this.evaluator.evaluateBoard(node.getBoard());
+      return -1 * this.evaluator.evaluateBoard(node.getBoard());
     }
 
     ArrayList<Piece> piecesToCheck;
@@ -153,7 +153,7 @@ public class MinimaxPlayer extends QuartoPlayer {
     //have we reached a leaf or was the game already won?
     //then evaluate how good the current state is 
     if (node.getBoard().gameWasWon() || depth <= 0) {
-      return -1 * this.evaluator.evaluateBoard(node.getBoard());
+      return this.evaluator.evaluateBoard(node.getBoard());
     }
 
     ArrayList<Piece> piecesToCheck = node.getBoard().getLeftoverPieces();
