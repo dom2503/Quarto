@@ -10,6 +10,11 @@ public class BoardEvaluator {
   
   private Random rand = new Random();
   
+  /**
+   * Evaluates the chances for the next user who can put a piece on the board.
+   * @param board
+   * @return 
+   */
   public double evaluateBoard(Board board){
     double result;
     if(board.gameWasWon()){

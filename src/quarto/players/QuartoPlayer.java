@@ -49,4 +49,8 @@ abstract public class QuartoPlayer implements Player{
     return this.name;
   }
   
+  public void reset(){
+    this.setGivenPiece(null);
+  }
+  
 }

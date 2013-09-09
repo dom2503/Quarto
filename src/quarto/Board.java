@@ -19,6 +19,10 @@ public class Board {
    * Sets up the board to the starting state.
    */
   public Board() {
+    this.reset();
+  }
+  
+  public void reset(){
     this.setupPieces();
     this.fields = new Piece[BOARD_LENGTH][BOARD_LENGTH];
   }
@@ -52,7 +56,7 @@ public class Board {
    * Sets the given field to the given coordinates if they are valid.
    */
   public boolean setField(int x, int y, Piece piece) {
-    if (this.isValidCoordinate(x, y) && this.fieldIsEmpty(x, y)) {
+    if (this.fieldCanBeSet(x, y)) {
       this.fields[x][y] = piece;
       return true;
     }
@@ -83,7 +87,7 @@ public class Board {
    * Checks if the given coordinates are in range of the board.
    */
   private boolean isValidCoordinate(int x, int y) {
-    if (x < BOARD_LENGTH && y < BOARD_LENGTH) {
+    if (x < BOARD_LENGTH && x >= 0 && y < BOARD_LENGTH && y >= 0) {
       return true;
     }
 
@@ -160,20 +164,27 @@ public class Board {
   /**
    * Prints a string representation of the current state of the board.
    */
-  public void printBoard() {
-    System.out.println("y\\x    1      2      3      4");
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("y\\x    1      2      3      4\n");
 
     for (int i = 0; i < BOARD_LENGTH; i++) {
-      System.out.print(" " + (char) (i + 65) + "    ");
+      sb.append(" ");
+      sb.append((char) (i + 65));
+      sb.append("    ");
       for (int j = 0; j < BOARD_LENGTH; j++) {
         if (fields[j][i] != null) {
-          System.out.print(" " + fields[j][i] + "  "); //uses toString of the piece to print it
+          sb.append(" ");
+          sb.append(fields[j][i]); //uses toString of the piece to print it
+          sb.append("  ");
         } else {
-          System.out.print(" ____  "); //empty field
+          sb.append(" ____  "); //empty field
         }
       }
-      System.out.println();
+      sb.append("\n");
     }
+    return sb.toString();
   }
 
   /**

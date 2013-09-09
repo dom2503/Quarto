@@ -85,7 +85,6 @@ public class MinimaxPlayer extends QuartoPlayer {
         if (oldFields[i][j] != newFields[i][j]) {
           oldBoard.setField(i, j, this.getGivenPiece());
           System.out.println("I made my move to " + (i+1) + (char) (j + 65));
-          oldBoard.printBoard();
           return;
         }
       }
@@ -95,7 +94,7 @@ public class MinimaxPlayer extends QuartoPlayer {
   private double maximize(MinimaxNode node, int depth, double alpha, double beta) {
     if (DEBUG) {
       System.out.println("Evaluating the following board:");
-      node.getBoard().printBoard();
+      System.out.println(node.getBoard().toString());
       System.out.println("Current depth = " + depth);
       System.out.println("Alpha/Beta = " + alpha + "/" + beta + "\n\n");
     }
@@ -145,7 +144,7 @@ public class MinimaxPlayer extends QuartoPlayer {
   private double minimize(MinimaxNode node, int depth, double alpha, double beta) {
     if (DEBUG) {
       System.out.println("Evaluating the following board:");
-      node.getBoard().printBoard();
+      System.out.println(node.getBoard().toString());
       System.out.println("Current depth = " + depth);
       System.out.println("Alpha/Beta = " + alpha + "/" + beta + "\n\n");
     }
@@ -216,7 +215,6 @@ public class MinimaxPlayer extends QuartoPlayer {
 
     this.minimize(this.rootNode, this.depth, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
     Piece selectedPiece = this.compareBoardsAndTakePiece(this.getBoard(), this.bestMove.getBoard());
-    System.out.println("I selected " + selectedPiece);
     return selectedPiece;
   }
 

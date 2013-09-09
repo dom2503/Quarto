@@ -27,15 +27,12 @@ public class RandomPlayer extends QuartoPlayer{
     }while(!moveMade);
     
     System.out.println("I made my move to " + (xCoordinate + 1) + (char) (yCoordinate + 65));
-    this.getBoard().printBoard();
   }
 
   @Override
   public Piece selectPieceForOpponent() {
     int leftPieces = this.getBoard().getLeftoverPieceCount();
-    System.out.println("Left pieces: " + leftPieces);
     Piece piece = this.getBoard().takePieceForOpponent(rand.nextInt(leftPieces) + 1);
-    System.out.println("I selected " + piece);
     return piece;
   }
   

@@ -36,4 +36,9 @@ public interface Player {
    * Returns the name given to this player. 
    */
   public String getName();
+  
+  /**
+   * Resets the player to it's initial state if necessary, so that a new game could be started.
+   */
+  public void reset();
 }
