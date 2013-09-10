@@ -16,7 +16,7 @@ public class QuartoGame {
 
   private Board board;
   private Scanner scanner;
-  private Player player1, player2;
+  final private Player player1, player2;
   private Player nextPlayer;
   private Player currentPlayer;
   private boolean silent = false;
@@ -32,6 +32,13 @@ public class QuartoGame {
   private QuartoGame() {
     this.scanner = new Scanner(System.in);
     this.board = new Board();
+    
+    System.out.println("---------- Welcome to Quarto! ----------\n");
+
+    this.player1 = this.determinePlayer("Player1");
+    this.currentPlayer = this.player1;
+    this.player2 = this.determinePlayer("Player2");
+    this.nextPlayer = this.player2;
   }
 
   /**
@@ -60,12 +67,6 @@ public class QuartoGame {
    * Start the game loop and run it until the game is over.
    */
   private void start() {
-    System.out.println("---------- Welcome to Quarto! ----------\n");
-
-    this.player1 = this.determinePlayer("Player1");
-    this.currentPlayer = this.player1;
-    this.player2 = this.determinePlayer("Player2");
-    this.nextPlayer = this.player2;
     int roundsToPlay = this.determineRoundsToPlay();
 
     if(roundsToPlay > 1){
@@ -104,8 +105,8 @@ public class QuartoGame {
     if(roundsToPlay > 1){
       System.out.println("Statistics:");
       System.out.println("Draws = " + draws);
-      System.out.println("Wins Player1 = " + winsPlayer1);
-      System.out.println("Wins Player2 = " + winsPlayer2);
+      System.out.println("Wins " + this.player1.getName() + " = " + winsPlayer1);
+      System.out.println("Wins " + this.player2.getName() + " = " + winsPlayer2);
     }
     System.exit(0);
   }
@@ -194,9 +195,9 @@ public class QuartoGame {
         player = new NovicePlayer(this.board);
         break;
       case 4:
-        System.out.println("Please enter the number of moves that should be inspected (1-4):");
+        System.out.println("Please enter the number of moves that should be inspected (1-6):");
         int searchDepth = -1;
-        while(searchDepth > 4 || searchDepth < 1){
+        while(searchDepth > 6 || searchDepth < 1){
           searchDepth = this.scanner.nextInt();
         }
         player = new MinimaxPlayer(this.board, searchDepth);

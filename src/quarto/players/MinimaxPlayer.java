@@ -15,15 +15,14 @@ import quarto.players.minimax.MinimaxNode;
 public class MinimaxPlayer extends QuartoPlayer {
 
   final private static int RANDOM_MOVES = 4; // the number of moves that should be done randomly in the beginning
-  final private static boolean DEBUG = false; 
+  final private static boolean DEBUG = false;
   final private int depth;
   final private BoardEvaluator evaluator;
   final private RandomPlayer randomPlayer;
-  
   private Board bestMove = null;
   private Piece bestPiece = null;
   private MinimaxNode rootNode;
-  private double bestScore;
+  private int evaluated;
 
   /**
    * Default constructor with a search depth of 3.
@@ -44,23 +43,26 @@ public class MinimaxPlayer extends QuartoPlayer {
     this.depth = depth;
     this.evaluator = new BoardEvaluator();
     this.randomPlayer = new RandomPlayer(board);
+    this.rootNode = new MinimaxNode(null, this.getBoard());
   }
 
-  private void resetState(){
+  private void resetState() {
     this.bestMove = null;
     this.bestPiece = null;
+    this.evaluated = 0;
   }
-  
+
   /**
    * Decides if a random or minimax move should be made.
    */
   @Override
   public String makeMove() {
-    this.resetState();
     if (this.getBoard().getMoveCount() < RANDOM_MOVES) {
-      return this.randomPlayer.makeMove();
+      String result = this.randomPlayer.makeMove();
+      this.setGivenPiece(null);
+      return result;
     } else {
-      return this.makeMaximizingMove();
+      return this.makeMinimaxMove();
     }
   }
 
@@ -76,33 +78,26 @@ public class MinimaxPlayer extends QuartoPlayer {
   /**
    * Runs the minimax algorithm on the current state of the game and makes the the appropriate move.
    */
-  private String makeMaximizingMove() {
-    //when maximizing we want higher scores, so we start with the lowest value
-    this.bestScore = Double.NEGATIVE_INFINITY;
-    this.rootNode = new MinimaxNode(null, this.getBoard());
+  private String makeMinimaxMove() {
+    this.resetState();
 
     this.maximize(this.rootNode, this.depth, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+    System.out.println("Evaluated states: " + this.evaluated);
     return this.compareBoardsAndMakeMove(this.getBoard(), this.bestMove);
   }
 
   private double maximize(MinimaxNode node, int depth, double alpha, double beta) {
-    if (DEBUG) {
-      System.out.println("Evaluating the following board:");
-      System.out.println(node.getBoard().toString());
-      System.out.println("Current depth = " + depth);
-      System.out.println("Alpha/Beta = " + alpha + "/" + beta + "\n\n");
-    }
-
-    //have we reached a leaf or was the game already won?
+    //have we reached depth limit or was the game already won?
     //then evaluate how good the current state is 
-    if (node.getBoard().gameWasWon() || depth <= 0) {
-      return this.evaluator.evaluateBoard(node.getBoard());
+    if (node.getBoard().gameWasWon() || node.getBoard().isDraw() || depth <= 0) {
+      this.evaluated++;
+      return -1 * this.evaluator.evaluateBoard(node.getBoard());
     }
 
     ArrayList<Piece> piecesToCheck;
     //when we are still at the start, we have to work with the piece that was given to us
     //otherwise we check with every piece
-    if (node == this.rootNode) {
+    if (node == this.rootNode && this.getGivenPiece() != null) {
       piecesToCheck = new ArrayList<Piece>();
       piecesToCheck.add(this.getGivenPiece());
     } else {
@@ -116,13 +111,19 @@ public class MinimaxPlayer extends QuartoPlayer {
 
           Board nextBoard = this.prepareNextBoard(node.getBoard(), currentPiece, xCoordinate, yCoordinate);
           if (nextBoard != null) {
+            if (node == this.rootNode && (bestMove == null || bestPiece == null)) {
+              bestMove = nextBoard;
+              bestPiece = currentPiece;
+            }
             MinimaxNode minimizeChild = new MinimaxNode(node, nextBoard);
-            alpha = Math.max(alpha, minimize(minimizeChild, depth - 1, alpha, beta));
+            double result = minimize(minimizeChild, depth - 1, alpha, beta);
 
-            if (node == rootNode && (this.bestMove == null || alpha > this.bestScore)) {
-              this.bestMove = nextBoard;
-              this.bestPiece = currentPiece;
-              this.bestScore = alpha;
+            if (result > alpha) {
+              alpha = result;
+              if (node == rootNode) {
+                this.bestMove = nextBoard;
+                this.bestPiece = currentPiece;
+              }
             }
 
             //prune here
@@ -145,7 +146,7 @@ public class MinimaxPlayer extends QuartoPlayer {
       for (int j = 0; j < Board.BOARD_LENGTH; j++) {
         if (oldFields[i][j] != newFields[i][j]) {
           oldBoard.setField(i, j, this.getGivenPiece());
-          System.out.println("x/y: " + i + "/" + j );
+          this.setGivenPiece(null);
           result = "I made my move to " + (i + 1) + (char) (j + 65);
         }
       }
@@ -155,26 +156,14 @@ public class MinimaxPlayer extends QuartoPlayer {
   }
 
   private double minimize(MinimaxNode node, int depth, double alpha, double beta) {
-    if (DEBUG) {
-      System.out.println("Evaluating the following board:");
-      System.out.println(node.getBoard().toString());
-      System.out.println("Current depth = " + depth);
-      System.out.println("Alpha/Beta = " + alpha + "/" + beta + "\n\n");
-    }
-
     //have we reached a leaf or was the game already won?
     //then evaluate how good the current state is 
-    if (node.getBoard().gameWasWon() || depth <= 0) {
-      return -1 * this.evaluator.evaluateBoard(node.getBoard());
+    if (node.getBoard().gameWasWon() || node.getBoard().isDraw() || depth <= 0) {
+      this.evaluated++;
+      return this.evaluator.evaluateBoard(node.getBoard());
     }
 
-    ArrayList<Piece> piecesToCheck;
-    if(this.getGivenPiece() != null){
-      piecesToCheck = new ArrayList<Piece>();
-      piecesToCheck.add(this.getGivenPiece());
-    } else {
-      piecesToCheck = node.getBoard().getLeftoverPieces();
-    }
+    ArrayList<Piece> piecesToCheck = node.getBoard().getLeftoverPieces();
     for (Piece currentPiece : piecesToCheck) {
 
       //walk through all possible moves on the board
@@ -184,12 +173,10 @@ public class MinimaxPlayer extends QuartoPlayer {
           Board nextBoard = this.prepareNextBoard(node.getBoard(), currentPiece, xCoordinate, yCoordinate);
           if (nextBoard != null) {
             MinimaxNode maximizeChild = new MinimaxNode(node, nextBoard);
-            beta = Math.min(beta, maximize(maximizeChild, depth - 1, alpha, beta));
+            double result = maximize(maximizeChild, depth - 1, alpha, beta);
 
-            if (node == rootNode && (this.bestMove == null || beta < this.bestScore)) {
-              this.bestMove = nextBoard;
-              this.bestPiece = currentPiece;
-              this.bestScore = beta;
+            if (result < beta) {
+              beta = result;
             }
 
             //prune here
@@ -204,7 +191,8 @@ public class MinimaxPlayer extends QuartoPlayer {
   }
 
   /**
-   * Copies the old board and makes a move with the given piece and coordinates.
+   * Copies the old board, makes a move with the given piece and coordinates on the new board and
+   * returns the new board.
    */
   private Board prepareNextBoard(Board oldBoard, Piece pieceToSet, int xCoordinate, int yCoordinate) {
     Board newBoard = null;
@@ -221,19 +209,18 @@ public class MinimaxPlayer extends QuartoPlayer {
 
   @Override
   public Piece selectPieceForOpponent() {
-    this.resetState();
     if (this.getBoard().getMoveCount() < RANDOM_MOVES) {
       return this.randomPlayer.selectPieceForOpponent();
     } else {
-      return this.selectMinimizingPiece();
+      return this.selectMinimaxPiece();
     }
   }
 
-  private Piece selectMinimizingPiece() {
-    this.bestScore = Double.POSITIVE_INFINITY;
-    this.rootNode = new MinimaxNode(null, this.getBoard());
+  private Piece selectMinimaxPiece() {
+    this.resetState();
 
-    this.minimize(this.rootNode, this.depth, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+    this.maximize(this.rootNode, this.depth, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+    this.getBoard().takePieceForOpponent(this.bestPiece);
     return this.bestPiece;
   }
 }
