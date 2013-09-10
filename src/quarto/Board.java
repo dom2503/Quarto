@@ -22,7 +22,10 @@ public class Board {
     this.reset();
   }
   
-  public void reset(){
+  /**
+   * Empties all the fields and creates a new set of pieces.
+   */
+  final public void reset(){
     this.setupPieces();
     this.fields = new Piece[BOARD_LENGTH][BOARD_LENGTH];
   }
@@ -98,24 +101,40 @@ public class Board {
    * Checks whether the last player that put a piece has won the game.
    */
   public boolean gameWasWon() {
-    for(int i = 0; i < BOARD_LENGTH; i++){
-      //get row to check
-      Piece[] currentRow = {fields[0][i], fields[1][i], fields[2][i], fields[3][i]};
-      
-      //checks column and row
-      if(lineIsWon(fields[i]) || lineIsWon(currentRow)){
+    ArrayList<Piece[]> lines = this.getLines();
+    
+    for(Piece[] line : lines){
+      if(this.lineIsWon(line)){
         return true;
       }
     }
     
-    //check diagonals
-    Piece[] backslashDiagonal = {fields[0][0], fields[1][1], fields[2][2], fields[3][3]};
-    Piece[] slashDiagonal = {fields[3][0], fields[2][1], fields[1][2], fields[0][3]};
-    if(lineIsWon(backslashDiagonal) || lineIsWon(slashDiagonal)){
-      return true;
+    return false;
+  }
+  
+  /**
+   * Creates a list of all the current lines in the game.
+   * 
+   * @return 
+   */
+  public ArrayList<Piece[]> getLines(){
+    ArrayList<Piece[]> lines = new ArrayList<Piece[]>();
+    
+    for(int i = 0; i < BOARD_LENGTH; i++){
+      Piece[] row = {fields[0][i], fields[1][i], fields[2][i], fields[3][i]};
+      lines.add(row);
+      
+      //add column
+      lines.add(fields[i]);
     }
     
-    return false;
+    //check diagonals
+    Piece[] backslashDiagonal = {fields[0][0], fields[1][1], fields[2][2], fields[3][3]};
+    lines.add(backslashDiagonal);
+    Piece[] slashDiagonal = {fields[3][0], fields[2][1], fields[1][2], fields[0][3]};
+    lines.add(slashDiagonal);
+    
+    return lines;
   }
   
   /**
