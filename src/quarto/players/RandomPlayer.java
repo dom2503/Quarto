@@ -17,7 +17,7 @@ public class RandomPlayer extends QuartoPlayer{
   }
   
   @Override
-  public void makeMove() {
+  public String makeMove() {
     boolean moveMade;
     int xCoordinate, yCoordinate;
     do{
@@ -26,7 +26,7 @@ public class RandomPlayer extends QuartoPlayer{
       moveMade = this.getBoard().setField(xCoordinate, yCoordinate, this.getGivenPiece());
     }while(!moveMade);
     
-    System.out.println("I made my move to " + (xCoordinate + 1) + (char) (yCoordinate + 65));
+    return "I made my move to " + (xCoordinate + 1) + (char) (yCoordinate + 65);
   }
 
   @Override

@@ -11,8 +11,10 @@ public interface Player {
   /**
    * Calculates the next move to be made according to the chosen algorithm and by looking at the 
    * given board.
+   * 
+   * @return A string that describes the made move.
    */
-  public void makeMove();
+  public String makeMove();
   
   /**
    * Calculates the piece that should be given to the opponent based on the chosen algorithm for the

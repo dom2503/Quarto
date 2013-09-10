@@ -20,7 +20,7 @@ public class HumanPlayer extends QuartoPlayer {
    * Queries the user for valid coordinates on the Quarto board.
    */
   @Override
-  public void makeMove() {
+  public String makeMove() {
     int xCoordinate = -1, yCoordinate = -1;
 
     while (!this.getBoard().setField(xCoordinate, yCoordinate, this.getGivenPiece())){
@@ -38,6 +38,8 @@ public class HumanPlayer extends QuartoPlayer {
         System.out.println("Your input was invalid, please try again.");
       }
     } 
+    
+    return "";
   }
 
   /**

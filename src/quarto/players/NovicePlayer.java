@@ -21,7 +21,7 @@ public class NovicePlayer extends QuartoPlayer {
   }
   
   @Override
-  public void makeMove() {
+  public String makeMove() {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 

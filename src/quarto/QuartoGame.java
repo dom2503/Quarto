@@ -88,14 +88,17 @@ public class QuartoGame {
         this.printlnSilent("You played to a draw. Nobody won.");
         draws++;
       } else if (this.board.gameWasWon()) {
-        if(this.board.getLeftoverPieceCount() % 2 == 0){
+        if(this.player1 == this.currentPlayer){
           winsPlayer1++;
-          System.out.println(this.currentPlayer.getName());
         }else{
           winsPlayer2++;
         }
         this.printlnSilent("Congratulations " + this.currentPlayer.getName() + " you have won the game.");
-      }    
+      }
+      
+      if(roundsToPlay >1){
+        System.out.println("Game " + (i+1) + " finished");
+      }
       this.resetGame();
     }
     if(roundsToPlay > 1){
@@ -149,7 +152,7 @@ public class QuartoGame {
   private void playRound() {
     this.printlnSilent("\n" + currentPlayer.getName() + " please select a piece to give to " + nextPlayer.getName() + ".");
     Piece nextPiece = currentPlayer.selectPieceForOpponent();
-    System.out.println(currentPlayer.getName() + " selected " + nextPiece);
+    this.printlnSilent(currentPlayer.getName() + " selected " + nextPiece);
     this.nextPlayer.setGivenPiece(nextPiece);
     Player tempPlayer = this.currentPlayer;
     this.currentPlayer = nextPlayer;
@@ -157,7 +160,7 @@ public class QuartoGame {
 
     this.printlnSilent("\n" + currentPlayer.getName() + " please make your move.");
     this.printSilent(this.board.toString());
-    this.currentPlayer.makeMove();
+    this.printlnSilent(this.currentPlayer.makeMove());
     this.printlnSilent(this.board.toString());
   }
 
@@ -191,7 +194,12 @@ public class QuartoGame {
         player = new NovicePlayer(this.board);
         break;
       case 4:
-        player = new MinimaxPlayer(this.board);
+        System.out.println("Please enter the number of moves that should be inspected (1-4):");
+        int searchDepth = -1;
+        while(searchDepth > 4 || searchDepth < 1){
+          searchDepth = this.scanner.nextInt();
+        }
+        player = new MinimaxPlayer(this.board, searchDepth);
         break;
       default:
         System.out.println("Please only input numbers between 1 and 4. ");

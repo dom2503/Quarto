@@ -48,11 +48,11 @@ public class MinimaxPlayer extends QuartoPlayer {
    * Decides if a random or minimax move should be made.
    */
   @Override
-  public void makeMove() {
+  public String makeMove() {
     if (this.getBoard().getMoveCount() < RANDOM_MOVES) {
-      this.randomPlayer.makeMove();
+      return this.randomPlayer.makeMove();
     } else {
-      this.makeMaximizingMove();
+      return this.makeMaximizingMove();
     }
   }
 
@@ -68,27 +68,30 @@ public class MinimaxPlayer extends QuartoPlayer {
   /**
    * Runs the minimax algorithm on the current state of the game and makes the the appropriate move.
    */
-  private void makeMaximizingMove() {
+  private String makeMaximizingMove() {
     //when maximizing we want higher scores, so we start with the lowest value
     this.bestScore = Double.NEGATIVE_INFINITY;
     this.rootNode = new MinimaxNode(null, this.getBoard());
 
     this.maximize(this.rootNode, this.depth, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-    this.compareBoardsAndMakeMove(this.getBoard(), this.bestMove.getBoard());
+    return this.compareBoardsAndMakeMove(this.getBoard(), this.bestMove.getBoard());
   }
 
-  private void compareBoardsAndMakeMove(Board oldBoard, Board newBoard) {
+  private String compareBoardsAndMakeMove(Board oldBoard, Board newBoard) {
     Piece[][] oldFields = oldBoard.getBoard();
     Piece[][] newFields = newBoard.getBoard();
+    String result = "";
+    
     for (int i = 0; i < Board.BOARD_LENGTH; i++) {
       for (int j = 0; j < Board.BOARD_LENGTH; j++) {
         if (oldFields[i][j] != newFields[i][j]) {
           oldBoard.setField(i, j, this.getGivenPiece());
-          System.out.println("I made my move to " + (i+1) + (char) (j + 65));
-          return;
+          result = "I made my move to " + (i+1) + (char) (j + 65);
         }
       }
     }
+    
+    return result;
   }
 
   private double maximize(MinimaxNode node, int depth, double alpha, double beta) {
