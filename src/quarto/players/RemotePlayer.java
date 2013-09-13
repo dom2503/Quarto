@@ -20,7 +20,7 @@ public class RemotePlayer extends QuartoPlayer implements IRemotePlayer{
   private ServerSocket socket;
   private Socket port;
 
-  public RemotePlayer(Board board, int port) throws IOException {
+  public RemotePlayer(Board board) throws IOException {
     super(board);
 
     if (port > -1) {
