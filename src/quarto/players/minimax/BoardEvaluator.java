@@ -10,30 +10,27 @@ import quarto.Piece;
  */
 public class BoardEvaluator {
   
-  private Random rand = new Random();
-  
   /**
    * Evaluates how good the current position is for the last player that made a move.
    * @param board
    * @return 
    */
-  public double evaluateBoard(Board board){
+  public double evaluateBoard(Board board, int depth){
     double result;
+    depth = Math.max(depth, 1);
     if(board.gameWasWon()){
-      result = Double.POSITIVE_INFINITY;
+      result = 1000 * depth;
     } else if(board.isDraw()){
       result = 0.0;
     } else {
       int nearlyFinishedLines = this.getNearlyFinishedLineCount(board);
-      
+
       if(nearlyFinishedLines == 0){
-        // 5 is arbitrary, but no finished lines means, that the next user can't finish
-        // which is more positive than a draw
-        return 5.0;
+        return depth * 10.0;
       }
       // nearly finished lines are bad, because, the next user could maybe finish them 
       // with the right piece
-      return -1.0 * nearlyFinishedLines;
+      return -1.0 * nearlyFinishedLines * depth;
     }
     
     return result;

@@ -6,6 +6,7 @@ import quarto.players.MinimaxPlayer;
 import quarto.players.NovicePlayer;
 import quarto.players.Player;
 import quarto.players.RandomPlayer;
+import quarto.players.RemotePlayer;
 
 /**
  * The main class of this simple command line Quarto game.
@@ -34,6 +35,7 @@ public class QuartoGame {
     this.board = new Board();
     
     System.out.println("---------- Welcome to Quarto! ----------\n");
+    System.out.println(Runtime.getRuntime().maxMemory());
 
     this.player1 = this.determinePlayer("Player1");
     this.currentPlayer = this.player1;
@@ -173,6 +175,7 @@ public class QuartoGame {
     System.out.println("2. Random Player");
     System.out.println("3. Novice Player");
     System.out.println("4. Minimax Player");
+    System.out.println("5. Remote Player");
   }
 
   /**
@@ -202,6 +205,8 @@ public class QuartoGame {
         }
         player = new MinimaxPlayer(this.board, searchDepth);
         break;
+      case 5:
+        player = new RemotePlayer(this.board);
       default:
         System.out.println("Please only input numbers between 1 and 4. ");
         player = this.playerTypeSelection(playerName);
