@@ -153,7 +153,7 @@ public double evaluateBoard(Board board){
 
 In the real version later on it should evaluate, whether the current state of the board is good for the last player that made a move though. A positive value meaning that this is the case and a negative one meaning that the opponent has an advantage.
 
-The state of the game as we look at it, is just the board and the pieces that were already placed.
+The state of the game as we look at it at this point, is just the board and the pieces that were already placed.
 
 After our implementation had developed into a more mature state we added the two distinctive finishing states of the Quarto game: a draw and the win of the player that set the last piece. As you can see below, we were returning positive infinity for a win, because it is the best outcome that can be reached and 0.0 for a draw, because no player has an advantage there.
 
@@ -175,13 +175,42 @@ public double evaluateBoard(Board board){
 \end{minted}
 \end{listing}
 
-Figuring out the next evolutionary step of the evaluation process proofed to be a bit more difficult though. What we somehow concluded was, that leaving a lot of nearly completed rows for the next player is somehow a bad decision.
+Figuring out the next evolutionary step of the evaluation process proofed to be a bit more difficult though. What we somehow concluded was, that leaving a lot of nearly completed rows, that contained three pieces with one or two identical properties for the next player is somehow a bad decision.
+
+Playing in a way that the other player doesn't have a choice but to leave open nearly finished lines however -- preferably with only pieces left that would finish these -- would be good decision making.
+
+We therfore replaced the random value in the else block with the following code that simply counts the number of lines that fulfill this criterias:
+
+\begin{listing}[H]
+\caption{Very basic evaluation function}
+\begin{minted}[linenos=true]{java}
+int nearlyFinishedLines = this.getNearlyFinishedLineCount(board);
+
+// the value of 10.0 is arbitrary, it's just to denote that it's good 
+// that we don't leave nearly finished lines
+if(nearlyFinishedLines == 0){
+  return 10.0;
+}
+// nearly finished lines are bad, because, the next user could maybe finish them 
+// with the right piece
+return -1.0 * nearlyFinishedLines;
+\end{minted}
+\end{listing}
+
 
 \section{Novice vs. Random}
 
 \section{Novice vs. Minimax-3}
 
 \section{Minimax-3 vs. Minimax-4}
+
+
+\begin{tabular}{l c c c}
+Runs & Minimax-3 & Minimax-4 & Draws \\
+\hline
+20 & 6 & 14 & 0  \\
+\end{tabular}
+
 
 \section{Tournament experiences}
 

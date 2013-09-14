@@ -1,7 +1,6 @@
 package quarto.players.minimax;
 
 import java.util.ArrayList;
-import java.util.Random;
 import quarto.Board;
 import quarto.Piece;
 
@@ -17,7 +16,7 @@ public class BoardEvaluator {
    */
   public double evaluateBoard(Board board, int depth){
     double result;
-    depth = Math.max(depth, 1);
+    depth = depth + 1;
     if(board.gameWasWon()){
       result = 1000 * depth;
     } else if(board.isDraw()){
@@ -25,6 +24,8 @@ public class BoardEvaluator {
     } else {
       int nearlyFinishedLines = this.getNearlyFinishedLineCount(board);
 
+      // the value of 10.0 is arbitrary, it's just to denote that it's good 
+      // that we don't leave nearly finished lines
       if(nearlyFinishedLines == 0){
         return depth * 10.0;
       }

@@ -83,6 +83,10 @@ public class MinimaxPlayer extends QuartoPlayer {
       if (state == this.getBoard() && this.bestPiece == null) {
         this.bestPiece = currentPiece;
       }
+      Piece oldBest = this.bestPiece;
+      double oldAlpha = alpha;
+      boolean straightLoss = false;
+      
       for (int x = 0; x < Board.BOARD_LENGTH; x++) {
         for (int y = 0; y < Board.BOARD_LENGTH; y++) {
           Board nextBoard = this.prepareNextBoard(state, x, y, currentPiece);
@@ -92,7 +96,10 @@ public class MinimaxPlayer extends QuartoPlayer {
               this.bestMove = new Point(x, y);
             }
             double result = minimizeMove(nextBoard, depth - 1, alpha, beta);
-
+            if(state==this.getBoard() && result >= 1000 * depth-1){
+              straightLoss = true;
+            }
+            
             if (result > alpha) {
               alpha = result;
               if (state == this.getBoard()) {
@@ -105,6 +112,10 @@ public class MinimaxPlayer extends QuartoPlayer {
             }
           }
         }
+      }
+      if(straightLoss){
+        this.bestPiece = oldBest;
+        alpha = oldAlpha;
       }
     }
 
@@ -169,7 +180,8 @@ public class MinimaxPlayer extends QuartoPlayer {
   public Piece selectMinimaxPiece() {
     this.bestMove = null;
     this.bestPiece = null;
-    this.minimizeMove(this.getBoard(), this.depth, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+    this.maximizeMove(this.getBoard(), this.depth, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+    this.getBoard().takePieceForOpponent(this.bestPiece);
     return this.bestPiece;
   }
 }
