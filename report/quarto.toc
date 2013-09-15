@@ -1,6 +1,6 @@
 \contentsline {section}{\numberline {1}General Setup}{3}{section.1}
 \contentsline {section}{\numberline {2}Evaluation Function}{4}{section.2}
-\contentsline {section}{\numberline {3}Novice vs. Random}{5}{section.3}
-\contentsline {section}{\numberline {4}Novice vs. Minimax-3}{5}{section.4}
-\contentsline {section}{\numberline {5}Minimax-3 vs. Minimax-4}{5}{section.5}
-\contentsline {section}{\numberline {6}Tournament experiences}{5}{section.6}
+\contentsline {section}{\numberline {3}Novice vs. Random}{6}{section.3}
+\contentsline {section}{\numberline {4}Novice vs. Minimax-3}{6}{section.4}
+\contentsline {section}{\numberline {5}Minimax-3 vs. Minimax-4}{6}{section.5}
+\contentsline {section}{\numberline {6}Tournament experiences}{6}{section.6}
