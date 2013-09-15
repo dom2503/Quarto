@@ -124,7 +124,7 @@ public class RemotePlayer extends QuartoPlayer implements IRemotePlayer {
 
   @Override
   public void sendMove(int x, int y) {
-    this.sendMessage(x + ", " + y + "\n");
+    this.sendMessage(x + ", " + y);
   }
 
   @Override
