@@ -1,5 +1,6 @@
 package quarto.players;
 
+import java.awt.Point;
 import java.util.Scanner;
 import quarto.Board;
 import quarto.Piece;
@@ -20,7 +21,7 @@ public class HumanPlayer extends QuartoPlayer {
    * Queries the user for valid coordinates on the Quarto board.
    */
   @Override
-  public String makeMove() {
+  public Point makeMove() {
     int xCoordinate = -1, yCoordinate = -1;
 
     while (!this.getBoard().setField(xCoordinate, yCoordinate, this.getGivenPiece())) {
@@ -39,7 +40,7 @@ public class HumanPlayer extends QuartoPlayer {
       }
     }
 
-    return "";
+    return new Point(xCoordinate, yCoordinate);
   }
 
   /**

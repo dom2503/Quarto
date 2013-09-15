@@ -1,5 +1,6 @@
 package quarto.players;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Iterator;
 import quarto.Board;
@@ -31,18 +32,18 @@ public class NovicePlayer extends QuartoPlayer {
   }
   
   @Override
-  public String makeMove() {
+  public Point makeMove() {
     for (int i = 0; i < BOARD_LENGTH; i++) {
       for (int j = 0; j < BOARD_LENGTH; j++) {
         Board newBoard = new Board(this.getBoard());
 
         if (newBoard.setField(i, j, this.getGivenPiece()) && newBoard.gameWasWon()) {
           this.getBoard().setField(i, j, this.getGivenPiece());
-          return "I made my move to " + (i + 1) + (char) (j + 65);
+          return new Point(i, j);
         }
       }
     }
-    String result = random.makeMove();
+    Point result = random.makeMove();
     this.setGivenPiece(null);
     return result;
   }

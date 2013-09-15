@@ -43,27 +43,27 @@ public class MinimaxPlayer extends QuartoPlayer {
   }
 
   @Override
-  public String makeMove() {
+  public Point makeMove() {
     if (this.getBoard().getMoveCount() < RANDOM_MOVES) {
-      String result = this.randomPlayer.makeMove();
+      Point result = this.randomPlayer.makeMove();
       this.setGivenPiece(null);
       //System.out.println("Left pieces: " + this.getBoard().getLeftoverPieces());
       return result;
     } else {
-      String result = this.makeMaximizeMove();
+      Point result = this.makeMaximizeMove();
       //System.out.println("Left pieces: " + this.getBoard().getLeftoverPieces());
       //System.out.println("Evaluated " + this.evaluated + " nodes.");
       return result;
     }
   }
 
-  private String makeMaximizeMove() {
+  private Point makeMaximizeMove() {
     this.bestMove = null;
     this.bestPiece = null;
     this.maximizeMove(this.getBoard(), this.depth, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
     this.getBoard().setField(this.bestMove.x, this.bestMove.y, this.getGivenPiece());
     this.setGivenPiece(null);
-    return "I made my move to " + this.bestMove;
+    return this.bestMove;
   }
 
   private double maximizeMove(Board state, int depth, double alpha, double beta) {

@@ -1,5 +1,6 @@
 package quarto.players;
 
+import java.awt.Point;
 import quarto.Piece;
 
 /**
@@ -12,9 +13,9 @@ public interface Player {
    * Calculates the next move to be made according to the chosen algorithm and by looking at the 
    * given board.
    * 
-   * @return A string that describes the made move.
+   * @return The coordinates of the made move.
    */
-  public String makeMove();
+  public Point makeMove();
   
   /**
    * Calculates the piece that should be given to the opponent based on the chosen algorithm for the

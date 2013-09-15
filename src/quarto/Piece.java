@@ -45,6 +45,13 @@ public class Piece{
     
     return returnString;
   }
+  
+  public boolean equals(Piece other){
+    if(other.color == this.color && other.innerShape == this.innerShape && other.shape == this.shape && other.size == this.size){
+      return true;
+    }
+    return false;
+  }
    
   
   

@@ -1,5 +1,6 @@
 package quarto.players;
 
+import java.awt.Point;
 import java.util.Random;
 import quarto.Board;
 import quarto.Piece;
@@ -17,7 +18,7 @@ public class RandomPlayer extends QuartoPlayer{
   }
   
   @Override
-  public String makeMove() {
+  public Point makeMove() {
     boolean moveMade;
     int xCoordinate, yCoordinate;
     do{
@@ -26,7 +27,7 @@ public class RandomPlayer extends QuartoPlayer{
       moveMade = this.getBoard().setField(xCoordinate, yCoordinate, this.getGivenPiece());
     }while(!moveMade);
     
-    return "I made my move to" + (xCoordinate + 1) + (char) (yCoordinate + 65);
+    return new Point(xCoordinate, yCoordinate);
   }
 
   @Override

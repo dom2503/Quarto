@@ -1,7 +1,9 @@
 package quarto;
 
+import java.awt.Point;
 import java.util.Scanner;
 import quarto.players.HumanPlayer;
+import quarto.players.IRemotePlayer;
 import quarto.players.MinimaxPlayer;
 import quarto.players.NovicePlayer;
 import quarto.players.Player;
@@ -39,8 +41,18 @@ public class QuartoGame {
 
     this.player1 = this.determinePlayer("Player1");
     this.currentPlayer = this.player1;
+    this.notifyRemote(this.player1, "Welcome Player1");
+    
     this.player2 = this.determinePlayer("Player2");
     this.nextPlayer = this.player2;
+    this.notifyRemote(this.player2, "Welcome Player2");
+  }
+  
+  private void notifyRemote(Player player, String message){
+    if(player instanceof IRemotePlayer){
+      IRemotePlayer remote = (IRemotePlayer) player;
+      remote.sendMessage(message);
+    }
   }
 
   /**
@@ -110,7 +122,16 @@ public class QuartoGame {
       System.out.println("Wins " + this.player1.getName() + " = " + winsPlayer1);
       System.out.println("Wins " + this.player2.getName() + " = " + winsPlayer2);
     }
+    closeRemotePlayer(this.player1);
+    closeRemotePlayer(this.player2);
     System.exit(0);
+  }
+  
+  private void closeRemotePlayer(Player player){
+    if(player instanceof IRemotePlayer){
+      IRemotePlayer remote = (IRemotePlayer) player;
+      remote.close();
+    }
   }
 
   private void resetGame(){
@@ -163,7 +184,12 @@ public class QuartoGame {
 
     this.printlnSilent("\n" + currentPlayer.getName() + " please make your move.");
     this.printSilent(this.board.toString());
-    this.printlnSilent(this.currentPlayer.makeMove());
+    Point move = this.currentPlayer.makeMove();
+    if(this.nextPlayer instanceof IRemotePlayer){
+      IRemotePlayer remote = (IRemotePlayer) this.nextPlayer;
+      remote.sendMove(move.x, move.y);
+    }
+    this.printlnSilent("I made my move to " + (move.x + 1) + (char) (move.y + 65));
     this.printlnSilent(this.board.toString());
   }
 
@@ -206,7 +232,12 @@ public class QuartoGame {
         player = new MinimaxPlayer(this.board, searchDepth);
         break;
       case 5:
-        player = new RemotePlayer(this.board);
+        IRemotePlayer remote = new RemotePlayer(this.board);
+        player = remote;
+        remote.sendMessage("Welcome, please enter your name:\n");
+        playerName = remote.receiveMessage();     
+        System.out.println(playerName + " connected.");
+        break;
       default:
         System.out.println("Please only input numbers between 1 and 4. ");
         player = this.playerTypeSelection(playerName);
