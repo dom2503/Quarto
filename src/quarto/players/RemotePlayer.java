@@ -11,8 +11,6 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import quarto.Board;
 import quarto.Piece;
 import quarto.properties.PieceColor;
@@ -36,12 +34,14 @@ public class RemotePlayer extends QuartoPlayer implements IRemotePlayer {
     scanner = new Scanner(System.in);
     int portNumber = -1;
 
-    System.out.println("Please specify the socket that should be used for connecting to the remote player (49152-65535):");
+    System.out.println("Please specify the port that should be opened for connecting to the remote player:");
     int connectionTries = 0;
     while (portNumber < 0 && socket == null) {
       portNumber = scanner.nextInt();
       try {
         ServerSocket serverSocket = new ServerSocket(portNumber);
+        
+        //wait for the player to connect
         serverSocket.setSoTimeout(30000);
         System.out.println("Waiting for a connection of the remote player.");
         socket = serverSocket.accept();
@@ -49,9 +49,9 @@ public class RemotePlayer extends QuartoPlayer implements IRemotePlayer {
         outgoing = new PrintWriter(socket.getOutputStream(), true);
         incoming = new BufferedReader(new InputStreamReader(socket.getInputStream()));
       } catch (IOException e) {
-        if (connectionTries <= 5) {
+        if (connectionTries < 3) {
           connectionTries++;
-          System.out.println("No connection could be established.");
+          System.out.println("No connection could be established, trying again.");
         } else {
           break;
         }
@@ -69,13 +69,13 @@ public class RemotePlayer extends QuartoPlayer implements IRemotePlayer {
       try {
         String inputLine = incoming.readLine();
         
-        //parse input line here
+        //parse input line to the correct move here
         
       } catch (IOException ex) {
         System.out.println("Couldn't read from the remote player.");
       }
     }
-    return "";
+    return "I made my move to ";
   }
 
   @Override

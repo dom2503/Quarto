@@ -179,7 +179,7 @@ Figuring out the next evolutionary step of the evaluation process proofed to be 
 
 Playing in a way that the other player doesn't have a choice but to leave open nearly finished lines however -- preferably with only pieces left that would finish these -- would be good decision making.
 
-We therfore replaced the random value in the else block with the following code that simply counts the number of lines that fulfill this criterias:
+We therfore replaced the random value in the else block with the following code that simply counts the number of lines that fulfill these criterias:
 
 \begin{listing}[H]
 \caption{Very basic evaluation function}
@@ -197,13 +197,17 @@ return -1.0 * nearlyFinishedLines;
 \end{minted}
 \end{listing}
 
+After a while we notice, that this also leads to problems, because the algorithm then overlooks obvious winning situations at a higher level in favor of winning situations in deeper levels in earlier moves.
+
+By adding the current depth level as a multiplier to the method, we were able to remedy this problem, so that obvious winning situations aren't overlooked anymore.
+
 
 \section{Novice vs. Random}
 
 \begin{tabular}{l c c c}
 Runs & Novice & Random & Draws \\
 \hline
-20 & 0 & 0 & 0  \\
+20 & 19 & 1 & 0  \\
 \end{tabular}
 
 \section{Novice vs. Minimax-3}
@@ -211,7 +215,7 @@ Runs & Novice & Random & Draws \\
 \begin{tabular}{l c c c}
 Runs & Novice & Minimax-3 & Draws \\
 \hline
-20 & 0 & 0 & 0  \\
+20 & 17 & 3 & 0  \\
 \end{tabular}
 
 \section{Minimax-3 vs. Minimax-4}
