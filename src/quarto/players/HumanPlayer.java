@@ -23,22 +23,22 @@ public class HumanPlayer extends QuartoPlayer {
   public String makeMove() {
     int xCoordinate = -1, yCoordinate = -1;
 
-    while (!this.getBoard().setField(xCoordinate, yCoordinate, this.getGivenPiece())){
+    while (!this.getBoard().setField(xCoordinate, yCoordinate, this.getGivenPiece())) {
       try {
         System.out.println("Please enter the x-coordinate for your move:");
         xCoordinate = this.scanner.nextInt() - 1;
-        if(xCoordinate < 0 || xCoordinate > 3){
+        if (xCoordinate < 0 || xCoordinate > 3) {
           throw new NumberFormatException("The xCoordinate was not in range.");
         }
-        
+
         System.out.println("Please enter the y-coordinate for your move:");
         yCoordinate = this.scanner.next("[ABCDabcd]").toUpperCase().charAt(0) - 65;
       } catch (Exception e) { //ArrayIndexOutOfBoundsExceptino|InputMismatchException
-        System.out.println(e.getMessage());
         System.out.println("Your input was invalid, please try again.");
+        this.scanner = new Scanner(System.in);
       }
-    } 
-    
+    }
+
     return "";
   }
 

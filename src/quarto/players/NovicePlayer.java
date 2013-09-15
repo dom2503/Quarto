@@ -6,7 +6,7 @@ import quarto.Board;
 import quarto.Piece;
 
 /**
- * This player makes it moves according to thes rules (taken from 
+ * This player makes it moves according to these rules (taken from 
  * the task document):
  * 
  * It always places its piece in a winning formation, if possible. 
