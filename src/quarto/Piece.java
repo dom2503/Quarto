@@ -25,6 +25,7 @@ public class Piece{
   }
   
   @Override
+  
   /**
    * Puts together a string representation of the properties of this piece.
    * 
@@ -44,5 +45,7 @@ public class Piece{
     
     return returnString;
   }
+   
+  
   
 }
