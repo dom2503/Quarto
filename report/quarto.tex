@@ -182,7 +182,7 @@ Playing in a way that the other player doesn't have a choice but to leave open n
 We therfore replaced the random value in the else block with the following code that simply counts the number of lines that fulfill these criterias:
 
 \begin{listing}[H]
-\caption{Very basic evaluation function}
+\caption{Counting nearly finished lines.}
 \begin{minted}[linenos=true]{java}
 int nearlyFinishedLines = this.getNearlyFinishedLineCount(board);
 
@@ -197,10 +197,25 @@ return -1.0 * nearlyFinishedLines;
 \end{minted}
 \end{listing}
 
-After a while we notice, that this also leads to problems, because the algorithm then overlooks obvious winning situations at a higher level in favor of winning situations in deeper levels in earlier moves.
+After a while we noticed, that this also leads to problems, because the algorithm then overlooks obvious winning situations at a higher level in favor of winning situations in deeper levels in earlier moves.
 
 By adding the current depth level as a multiplier to the method, we were able to remedy this problem, so that obvious winning situations aren't overlooked anymore.
 
+\begin{listing}[H]
+\caption{Using depth as a multiplier}
+\begin{minted}[linenos=true]{java}
+int nearlyFinishedLines = this.getNearlyFinishedLineCount(board);
+
+// the value of 10.0 is arbitrary, it's just to denote that it's good 
+// that we don't leave nearly finished lines
+if(nearlyFinishedLines == 0){
+  return depth * 10.0;
+}
+// nearly finished lines are bad, because, the next user could maybe finish them 
+// with the right piece
+return -1.0 * nearlyFinishedLines * depth;
+\end{minted}
+\end{listing}
 
 \section{Novice vs. Random}
 
@@ -239,5 +254,40 @@ Runs & Our Minimax & Jan \& Tomas & Draws \\
 \hline
 20 & 0 & 0 & 0  \\
 \end{tabular}
+
+Together with the other groups we decided to use a client-server approach for making the tournament happen. As we were the first group to be ready with the basic application, we inherited the responsibility of being the server, which was surprisingly easy to do within our environment and yielded the additional benefit, that we could decide about the used protocol.
+
+For the implementation we just needed to extend the above mentioned Player interface a bit, so that it also could be used to send some additional messages and implement it in a \textit{RemotePlayer} class: 
+
+\begin{listing}[H]
+\caption{Remote player interface}
+\begin{minted}[linenos=true]{java}
+public interface IRemotePlayer extends Player {
+  public void sendMove(int x, int y);
+  public void sendMessage(String message);
+  public String receiveMessage();
+  public void close();
+}
+\end{minted}
+\end{listing}
+
+The only change to our game loop was then to check if the nextPlayer is a remote player, so that we would need to send some information about the made move:
+
+\begin{listing}[H]
+\caption{Sending move information.}
+\begin{minted}[linenos=true]{java}
+Point move = this.currentPlayer.makeMove();
+if(this.nextPlayer instanceof IRemotePlayer){
+  IRemotePlayer remote = (IRemotePlayer) this.nextPlayer;
+  remote.sendMove(move.x, move.y);
+}
+\end{minted}
+\end{listing}
+
+All the other methods of the normal interface could basically be used, just instead of calculating the correct move within \textit{makeMove} for example we just needed to read from the port that was opened on the creation of the object. This setup could also easily be used with two remote players, because every object uses a different port to communicate.
+
+The major problem was then just to get everyone together in order to conduct the real tournament and fix the unavoidable bugs. Our server part was just written with a very small dummy script after all.
+
+Seeing how our implemented player performed against others was then really interestings.
 
 \end{document}

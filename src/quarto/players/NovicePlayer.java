@@ -30,7 +30,7 @@ public class NovicePlayer extends QuartoPlayer {
     super.setGivenPiece(piece);
     this.random.setGivenPiece(piece);
   }
-  
+
   @Override
   public Point makeMove() {
     for (int i = 0; i < BOARD_LENGTH; i++) {
@@ -52,27 +52,30 @@ public class NovicePlayer extends QuartoPlayer {
   public Piece selectPieceForOpponent() {
     ArrayList<Piece> pieces = this.getBoard().getLeftoverPieces();
     Iterator<Piece> it = pieces.iterator();
+    Piece selectedPiece = null;
 
     while (it.hasNext()) {
       Piece piece = it.next();
-
+      boolean wasLoss = false;
+      
       for (int i = 0; i < BOARD_LENGTH; i++) {
         for (int j = 0; j < BOARD_LENGTH; j++) {
           Board newBoard = new Board(this.getBoard());
 
-          if (newBoard.setField(i, j, piece) && !newBoard.gameWasWon()) {
-            piece = this.getBoard().takePieceForOpponent(piece);
-            return piece;
-          }
+          if (newBoard.setField(i, j, piece) && newBoard.gameWasWon()) {
+            wasLoss = true;
+          } 
         }
       }
-
-
-
-
-
+      if(!wasLoss){
+        selectedPiece = piece;
+      }
     }
-    return random.selectPieceForOpponent();
+    if (selectedPiece == null) {
+      selectedPiece = random.selectPieceForOpponent();
+    }
+    this.getBoard().takePieceForOpponent(selectedPiece);
+    return selectedPiece;
 
   }
 }

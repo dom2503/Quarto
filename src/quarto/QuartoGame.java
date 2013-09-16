@@ -37,7 +37,6 @@ public class QuartoGame {
     this.board = new Board();
     
     System.out.println("---------- Welcome to Quarto! ----------\n");
-    System.out.println(Runtime.getRuntime().maxMemory());
 
     this.player1 = this.determinePlayer("Player1");
     this.currentPlayer = this.player1;
@@ -188,6 +187,7 @@ public class QuartoGame {
     if(this.nextPlayer instanceof IRemotePlayer){
       IRemotePlayer remote = (IRemotePlayer) this.nextPlayer;
       remote.sendMove(move.x, move.y);
+      remote.sendMessage("-");
     }
     this.printlnSilent("I made my move to " + (move.x + 1) + (char) (move.y + 65));
     this.printlnSilent(this.board.toString());
@@ -224,7 +224,7 @@ public class QuartoGame {
         player = new NovicePlayer(this.board);
         break;
       case 4:
-        System.out.println("Please enter the number of moves that should be inspected (1-6):");
+        System.out.println("Please enter the number of moves that should be inspected:");
         int searchDepth = -1;
         while(searchDepth > 6 || searchDepth < 1){
           searchDepth = this.scanner.nextInt();
@@ -239,7 +239,7 @@ public class QuartoGame {
         System.out.println(playerName + " connected.");
         break;
       default:
-        System.out.println("Please only input numbers between 1 and 4. ");
+        System.out.println("Please only input numbers between 1 and 5. ");
         player = this.playerTypeSelection(playerName);
     }
 
