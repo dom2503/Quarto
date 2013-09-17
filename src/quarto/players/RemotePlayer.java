@@ -80,6 +80,7 @@ public class RemotePlayer extends QuartoPlayer implements IRemotePlayer {
 
       this.getBoard().setField(xPosition, yPosition, this.getGivenPiece());
       move = new Point(xPosition, yPosition);
+      
     }
     return move;
   }
@@ -117,6 +118,11 @@ public class RemotePlayer extends QuartoPlayer implements IRemotePlayer {
   @Override
   public void setGivenPiece(Piece piece) {
     super.setGivenPiece(piece);
+    if(piece == null)
+    {
+       this.sendMessage("\n");
+      
+    }
     String piecebinaryRepresentation = "" + piece.color.ordinal() + piece.size.ordinal() + piece.innerShape.ordinal() + piece.shape.ordinal();
 
     this.sendMessage(piecebinaryRepresentation);
