@@ -125,7 +125,7 @@ You can see an example of the interface we created in \autoref{fig:basic-interfa
 
 The general structure of our code is pretty simple. The main class of the application is \textit{QuartoGame}, which contains the game loop and almost all setup and command line interface parts. The actual game is put together through the \textit{Board} and \textit{Piece} classes and some additional enums for the properties of the pieces.
 
-All the different players that we were supposed to write just needed to be able to pick a next piece and to make a move with the piece that was given to them, as can be seen in the shortened version of our \textit{Player} interface below.
+All the local players that we were supposed to write just needed to be able to pick a next piece and to make a move with the piece that was given to them, as can be seen in the shortened version of our \textit{Player} interface below.
 
 \begin{listing}[H]
 \caption{Player interface}
@@ -146,16 +146,16 @@ We first started out thinking about the actual evaluation function for the state
 \caption{Dummy evaluation function}
 \begin{minted}[linenos=true]{java}
 public double evaluateBoard(Board board){
-        return rand.nextDouble();
+  return rand.nextDouble();
 }
 \end{minted}
 \end{listing}
 
-In the real version later on it should evaluate, whether the current state of the board is good for the last player that made a move though. A positive value meaning that this is the case and a negative one meaning that the opponent has an advantage.
+In the real version later on it should evaluate, whether the current state of the board is good for the player that is supposed to make the next move. A positive value meaning that this is the case and a negative one meaning that the opponent has an advantage.
 
 The state of the game as we look at it at this point, is just the board and the pieces that were already placed.
 
-After our implementation had developed into a more mature state we added the two distinctive finishing states of the Quarto game: a draw and the win of the player that set the last piece. As you can see below, we were returning positive infinity for a win, because it is the best outcome that can be reached and 0.0 for a draw, because no player has an advantage there.
+After our implementation of Minimax had developed into a more mature state we added the two distinctive finishing states of the Quarto game: a draw and the win of the player that set the last piece. As you can see below, we were returning negative infinity for a win, because it is the worst outcome that can be reached and 0.0 for a draw, because no player has an advantage there.
 
 \begin{listing}[H]
 \caption{Very basic evaluation function}
@@ -163,7 +163,7 @@ After our implementation had developed into a more mature state we added the two
 public double evaluateBoard(Board board){
     double result;
     if(board.gameWasWon()){
-      result = Double.POSITIVE_INFINITY;
+      result = Double.NEGATIVE_INFINITY;
     } else if(board.isDraw()){
       result = 0.0;
     } else {
@@ -197,32 +197,20 @@ return -1.0 * nearlyFinishedLines;
 \end{minted}
 \end{listing}
 
-After a while we noticed, that this also leads to problems, because the algorithm then overlooks obvious winning situations at a higher level in favor of winning situations in deeper levels in earlier moves.
+After a while we noticed, that even though Minimax was winning against the random player, it was having trouble against the novice. What we figured was, that the heuristic we had was probably not perfect, but should still win against this player.
 
-By adding the current depth level as a multiplier to the method, we were able to remedy this problem, so that obvious winning situations aren't overlooked anymore.
+By talking to the other group we got some hints to help us fix these problems.
 
-\begin{listing}[H]
-\caption{Using depth as a multiplier}
-\begin{minted}[linenos=true]{java}
-int nearlyFinishedLines = this.getNearlyFinishedLineCount(board);
+The first point was, that we were running minimax two times, both for the selection of the move and the piece. Additionally the piece selection seemed to be somehow faulty then. It was selecting very unintelligently sometimes. While trying to figure out this bug, one member of the other teams we talked to mentioned that we didn't even need to evaluate twice, but that we could simply the piece that we found during the selection of the move -- which  is totally logical, because nothing changes in between.
 
-// the value of 10.0 is arbitrary, it's just to denote that it's good 
-// that we don't leave nearly finished lines
-if(nearlyFinishedLines == 0){
-  return depth * 10.0;
-}
-// nearly finished lines are bad, because, the next user could maybe finish them 
-// with the right piece
-return -1.0 * nearlyFinishedLines * depth;
-\end{minted}
-\end{listing}
+The second problem we had was that we forgot to multiply the result of the evaluation by -1 when minimizing.
 
 \section{Novice vs. Random}
 
 \begin{tabular}{l c c c}
 Runs & Novice & Random & Draws \\
 \hline
-20 & 19 & 1 & 0  \\
+20 & 20 & 0 & 0  \\
 \end{tabular}
 
 \section{Novice vs. Minimax-3}
@@ -230,7 +218,7 @@ Runs & Novice & Random & Draws \\
 \begin{tabular}{l c c c}
 Runs & Novice & Minimax-3 & Draws \\
 \hline
-20 & 3 & 17 & 0  \\
+20 & 1 & 19 & 0  \\
 \end{tabular}
 
 \section{Minimax-3 vs. Minimax-4}
@@ -238,7 +226,7 @@ Runs & Novice & Minimax-3 & Draws \\
 \begin{tabular}{l c c c}
 Runs & Minimax-3 & Minimax-4 & Draws \\
 \hline
-20 & 5 & 15 & 0  \\
+20 & 3 & 10 & 7  \\
 \end{tabular}
 
 \section{Tournament experiences}
@@ -246,16 +234,16 @@ Runs & Minimax-3 & Minimax-4 & Draws \\
 \begin{tabular}{l c c c}
 Runs & Our Minimax & Marc \& Valerio & Draws \\
 \hline
-20 & 0 & 0 & 0  \\
+20 & ? & ? & ?  \\
 \end{tabular}
 
 \begin{tabular}{l c c c}
 Runs & Our Minimax & Jan \& Tomas & Draws \\
 \hline
-20 & 0 & 0 & 0  \\
+20 & 0 & 18 & 2  \\
 \end{tabular}
 
-Together with the other groups we decided to use a client-server approach for making the tournament happen. As we were the first group to be ready with the basic application, we inherited the responsibility of being the server, which was surprisingly easy to do within our environment and yielded the additional benefit, that we could decide about the used protocol.
+Together with the other groups we decided to use a client-server approach for making the tournament happen. As our software architecture was really well suited for being the server, we inherited the responsibility of implementing this part and figure out the main protocol.
 
 For the implementation we just needed to extend the above mentioned Player interface a bit, so that it also could be used to send some additional messages and implement it in a \textit{RemotePlayer} class: 
 
@@ -286,8 +274,14 @@ if(this.nextPlayer instanceof IRemotePlayer){
 
 All the other methods of the normal interface could basically be used, just instead of calculating the correct move within \textit{makeMove} for example we just needed to read from the port that was opened on the creation of the object. This setup could also easily be used with two remote players, because every object uses a different port to communicate.
 
-The major problem was then just to get everyone together in order to conduct the real tournament and fix the unavoidable bugs. Our server part was just written with a very small dummy script after all.
+The major problem was then just to get everyone together in order to conduct the real tournament and fix the unavoidable small bugs, the server was just written with a very small dummy client after all.
 
-Seeing how our implemented player performed against others was then really interestings.
+With one of the groups we wanted to conduct the tournament with, this was working pretty well. We just met with them, discussed the protocol and handed them the .jar file which they could use to test their own client implementation. They just found one bug, which was easily fixable and after this it was working fine, when both implementations where executed on the same machine. 
+
+We also tried to run the tournament over the eduroam network with them, but this was leading to exceptions, for which our best guess is, that it has something to do with linefeed problems between Windows and OS X.
+
+During the games we played against them, we found out, that the heuristic we implemented apparently wasn't really good. They were simply wiping the floor with our Minimax-4 player.
+
+By the time of writing of this report -- three hours before the deadline -- the 2nd team we wanted to battle against sadly hadn't finished their client implementation. We are still hoping, that we will be able to present at least the results table here, but wanted to finish the report now.
 
 \end{document}

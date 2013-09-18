@@ -70,6 +70,12 @@ public class MinimaxPlayer extends QuartoPlayer {
     }
 
     ArrayList<Piece> leftPieces = state.getLeftoverPieces();
+    
+    //initalize best piece with first piece of the left pieces
+    if(state == this.getBoard() && this.bestPiece == null){
+      this.bestPiece = leftPieces.get(0);
+    }
+    
     for (int x = 0; x < Board.BOARD_LENGTH; x++) {
       for (int y = 0; y < Board.BOARD_LENGTH; y++) {
         Board nextBoard = this.prepareNextBoard(state, x, y, givenPiece);
@@ -85,6 +91,7 @@ public class MinimaxPlayer extends QuartoPlayer {
               alpha = result;
               if (state == this.getBoard()) {
                 this.bestMove = new Point(x, y);
+                this.bestPiece = currentPiece;
               }
               if (alpha >= beta) {
                 return alpha;
@@ -139,11 +146,11 @@ public class MinimaxPlayer extends QuartoPlayer {
 
   @Override
   public Piece selectPieceForOpponent() {
-    //if (this.getBoard().getMoveCount() < OUTSOURCED_MOVES) {
+    if (this.getBoard().getMoveCount() < OUTSOURCED_MOVES || this.bestPiece == null) {
       return this.startPlayer.selectPieceForOpponent();
-    /*} else {
-      return this.selectMinimaxPiece();
-    }*/
+    } else {
+      return this.bestPiece;
+    }
   }
 
   public Piece selectMinimaxPiece() {
@@ -159,5 +166,12 @@ public class MinimaxPlayer extends QuartoPlayer {
     }
     this.getBoard().takePieceForOpponent(this.bestPiece);
     return this.bestPiece;
+  }
+  
+  @Override
+  public void reset(){
+    this.startPlayer.reset();
+    this.bestPiece = null;
+    this.bestMove = null;
   }
 }
