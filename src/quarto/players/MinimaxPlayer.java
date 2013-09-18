@@ -16,8 +16,8 @@ import quarto.players.minimax.BoardEvaluator;
  */
 public class MinimaxPlayer extends QuartoPlayer {
 
-  final private static int RANDOM_MOVES = 3; // the number of moves that should be done randomly in the beginning
-  final private RandomPlayer randomPlayer;
+  final private static int OUTSOURCED_MOVES = 3; // the number of moves that should be done randomly in the beginning
+  final private Player startPlayer;
   final private int depth;
   final private BoardEvaluator evaluator;
   private int evaluated;
@@ -33,26 +33,23 @@ public class MinimaxPlayer extends QuartoPlayer {
 
     this.depth = depth;
     this.evaluator = new BoardEvaluator();
-    this.randomPlayer = new RandomPlayer(board);
+    this.startPlayer = new NovicePlayer(board);
   }
 
   @Override
   public void setGivenPiece(Piece piece) {
     super.setGivenPiece(piece);
-    this.randomPlayer.setGivenPiece(piece);
+    this.startPlayer.setGivenPiece(piece);
   }
 
   @Override
   public Point makeMove() {
-    if (this.getBoard().getMoveCount() < RANDOM_MOVES) {
-      Point result = this.randomPlayer.makeMove();
+    if (this.getBoard().getMoveCount() < OUTSOURCED_MOVES) {
+      Point result = this.startPlayer.makeMove();
       this.setGivenPiece(null);
-      //System.out.println("Left pieces: " + this.getBoard().getLeftoverPieces());
       return result;
     } else {
       Point result = this.makeMaximizeMove();
-      //System.out.println("Left pieces: " + this.getBoard().getLeftoverPieces());
-      //System.out.println("Evaluated " + this.evaluated + " nodes.");
       return result;
     }
   }
@@ -60,35 +57,29 @@ public class MinimaxPlayer extends QuartoPlayer {
   private Point makeMaximizeMove() {
     this.bestMove = null;
     this.bestPiece = null;
-    this.maximizeMove(this.getBoard(), this.depth, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+    this.maximizeMove(this.getBoard(), this.depth, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, this.getGivenPiece());
     this.getBoard().setField(this.bestMove.x, this.bestMove.y, this.getGivenPiece());
     this.setGivenPiece(null);
     return this.bestMove;
   }
 
-  private double maximizeMove(Board state, int depth, double alpha, double beta) {
+  private double maximizeMove(Board state, int depth, double alpha, double beta, Piece givenPiece) {
     if (state.gameWasWon() || state.isDraw() || depth <= 0) {
       this.evaluated++;
-      return -1 * this.evaluator.evaluateBoard(state, depth);
+      return this.evaluator.evaluateBoard(state);
     }
 
-    ArrayList<Piece> leftPieces = new ArrayList<Piece>();
-    if (state == this.getBoard() && this.getGivenPiece() != null) {
-      leftPieces.add(this.getGivenPiece());
-    } else {
-      leftPieces = state.getLeftoverPieces();
-    }
+    ArrayList<Piece> leftPieces = state.getLeftoverPieces();
+    for (int x = 0; x < Board.BOARD_LENGTH; x++) {
+      for (int y = 0; y < Board.BOARD_LENGTH; y++) {
+        Board nextBoard = this.prepareNextBoard(state, x, y, givenPiece);
+        if (nextBoard != null) {
+          if (state == this.getBoard() && this.bestMove == null) {
+            this.bestMove = new Point(x, y);
+          }
 
-    for (Piece currentPiece : leftPieces) {
-      for (int x = 0; x < Board.BOARD_LENGTH; x++) {
-        for (int y = 0; y < Board.BOARD_LENGTH; y++) {
-          Board nextBoard = this.prepareNextBoard(state, x, y, currentPiece);
-
-          if (nextBoard != null) {
-            if (state == this.getBoard() && this.bestMove == null) {
-              this.bestMove = new Point(x, y);
-            }
-            double result = minimizeMove(nextBoard, depth - 1, alpha, beta);
+          for (Piece currentPiece : leftPieces) {
+            double result = minimizeMove(nextBoard, depth - 1, alpha, beta, currentPiece);
 
             if (result > alpha) {
               alpha = result;
@@ -107,20 +98,21 @@ public class MinimaxPlayer extends QuartoPlayer {
     return alpha;
   }
 
-  private double minimizeMove(Board state, int depth, double alpha, double beta) {
+  private double minimizeMove(Board state, int depth, double alpha, double beta, Piece givenPiece) {
     if (state.gameWasWon() || state.isDraw() || depth <= 0) {
       this.evaluated++;
-      return this.evaluator.evaluateBoard(state, depth);
+      return -1 * this.evaluator.evaluateBoard(state);
     }
 
     ArrayList<Piece> leftPieces = this.getBoard().getLeftoverPieces();
 
-    for (Piece currentPiece : leftPieces) {
-      for (int x = 0; x < Board.BOARD_LENGTH; x++) {
-        for (int y = 0; y < Board.BOARD_LENGTH; y++) {
-          Board nextBoard = this.prepareNextBoard(state, x, y, currentPiece);
+    for (int x = 0; x < Board.BOARD_LENGTH; x++) {
+      for (int y = 0; y < Board.BOARD_LENGTH; y++) {
+        Board nextBoard = this.prepareNextBoard(state, x, y, givenPiece);
+
+        for (Piece currentPiece : leftPieces) {
           if (nextBoard != null) {
-            double result = this.maximizeMove(nextBoard, depth - 1, alpha, beta);
+            double result = this.maximizeMove(nextBoard, depth - 1, alpha, beta, currentPiece);
 
             if (result < beta) {
               beta = result;
@@ -147,85 +139,25 @@ public class MinimaxPlayer extends QuartoPlayer {
 
   @Override
   public Piece selectPieceForOpponent() {
-    if (this.getBoard().getMoveCount() < RANDOM_MOVES) {
-      return this.randomPlayer.selectPieceForOpponent();
-    } else {
+    //if (this.getBoard().getMoveCount() < OUTSOURCED_MOVES) {
+      return this.startPlayer.selectPieceForOpponent();
+    /*} else {
       return this.selectMinimaxPiece();
-    }
+    }*/
   }
 
   public Piece selectMinimaxPiece() {
     this.bestMove = null;
     this.bestPiece = null;
-    this.maximizePiece(this.getBoard(), this.depth, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+    ArrayList<Piece> leftPieces = this.getBoard().getLeftoverPieces();
+    double worstResult = Double.POSITIVE_INFINITY;
+    for (Piece currentPiece : leftPieces) {
+      double currentResult = this.maximizeMove(this.getBoard(), this.depth, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, currentPiece);
+      if (currentResult > worstResult) {
+        this.bestPiece = currentPiece;
+      }
+    }
     this.getBoard().takePieceForOpponent(this.bestPiece);
     return this.bestPiece;
-  }
-
-  private double maximizePiece(Board state, int depth, double alpha, double beta) {
-    if (state.gameWasWon() || state.isDraw() || depth <= 0) {
-      this.evaluated++;
-      return -1 * this.evaluator.evaluateBoard(state, depth);
-    }
-
-    ArrayList<Piece> leftPieces = state.getLeftoverPieces();
-
-    for (Piece currentPiece : leftPieces) {
-      if (state == this.getBoard() && this.bestPiece == null) {
-        this.bestPiece = currentPiece;
-      }
-      double localMinimum = Double.POSITIVE_INFINITY;
-
-      for (int x = 0; x < Board.BOARD_LENGTH; x++) {
-        for (int y = 0; y < Board.BOARD_LENGTH; y++) {
-          Board nextBoard = this.prepareNextBoard(state, x, y, currentPiece);
-
-          if (nextBoard != null) {
-            double result = minimizePiece(nextBoard, depth - 1, alpha, beta);
-
-            if (result < localMinimum) {
-              localMinimum = result;
-            }
-          }
-        }
-      }
-      if (localMinimum > alpha) {
-        this.bestPiece = currentPiece;
-        alpha = localMinimum;
-      }
-      if (alpha >= beta) {
-        return alpha;
-      }
-    }
-
-    return alpha;
-  }
-
-  private double minimizePiece(Board state, int depth, double alpha, double beta) {
-    if (state.gameWasWon() || state.isDraw() || depth <= 0) {
-      this.evaluated++;
-      return this.evaluator.evaluateBoard(state, depth);
-    }
-
-    ArrayList<Piece> leftPieces = this.getBoard().getLeftoverPieces();
-
-    for (Piece currentPiece : leftPieces) {
-      for (int x = 0; x < Board.BOARD_LENGTH; x++) {
-        for (int y = 0; y < Board.BOARD_LENGTH; y++) {
-          Board nextBoard = this.prepareNextBoard(state, x, y, currentPiece);
-          if (nextBoard != null) {
-            double result = this.maximizePiece(nextBoard, depth - 1, alpha, beta);
-
-            if (result < beta) {
-              beta = result;
-            }
-            if (beta <= alpha) {
-              return beta;
-            }
-          }
-        }
-      }
-    }
-    return beta;
   }
 }

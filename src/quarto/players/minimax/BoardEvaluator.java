@@ -14,11 +14,10 @@ public class BoardEvaluator {
    * @param board
    * @return 
    */
-  public double evaluateBoard(Board board, int depth){
+  public double evaluateBoard(Board board){
     double result;
-    depth = depth + 1;
     if(board.gameWasWon()){
-      result = 1000 * depth;
+      result = -1 * 1000;
     } else if(board.isDraw()){
       result = 0.0;
     } else {
@@ -27,11 +26,11 @@ public class BoardEvaluator {
       // the value of 10.0 is arbitrary, it's just to denote that it's good 
       // that we don't leave nearly finished lines
       if(nearlyFinishedLines == 0){
-        return depth * 10.0;
+        return 10.0;
       }
       // nearly finished lines are bad, because, the next user could maybe finish them 
       // with the right piece
-      return -1.0 * nearlyFinishedLines * depth;
+      return -1 * nearlyFinishedLines;
     }
     
     return result;
