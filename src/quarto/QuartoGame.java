@@ -75,7 +75,6 @@ public class QuartoGame {
       System.out.print(s);
     }
   }
-
   /**
    * Start the game loop and run it until the game is over.
    */

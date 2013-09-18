@@ -121,7 +121,7 @@ public class RemotePlayer extends QuartoPlayer implements IRemotePlayer {
     if(piece == null)
     {
        this.sendMessage("\n");
-      
+      return;
     }
     String piecebinaryRepresentation = "" + piece.color.ordinal() + piece.size.ordinal() + piece.innerShape.ordinal() + piece.shape.ordinal();
 
