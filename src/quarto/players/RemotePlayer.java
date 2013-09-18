@@ -46,7 +46,7 @@ public class RemotePlayer extends QuartoPlayer implements IRemotePlayer {
         serverSocket = new ServerSocket(portNumber);
 
         //wait for the player to connect
-        serverSocket.setSoTimeout(30000);
+        serverSocket.setSoTimeout(90000);
         System.out.println("Waiting for a connection of the remote player.");
         socket = serverSocket.accept();
       } catch (IOException e) {
